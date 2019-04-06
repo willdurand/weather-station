@@ -75,6 +75,7 @@ void drawHeaderOverlay(OLEDDisplay* display, OLEDDisplayUiState* state);
 void setReadyForWeatherUpdate();
 void drawOtaProgress(unsigned int, unsigned int);
 void drawLoadingDots(unsigned int, String);
+void setLowContrast();
 
 // This array keeps function pointers to all frames.
 FrameCallback frames[] = {
@@ -97,10 +98,9 @@ void setup() {
   display.clear();
   display.display();
 
-  //display.flipScreenVertically();
   display.setFont(ArialMT_Plain_10);
   display.setTextAlignment(TEXT_ALIGN_CENTER);
-  display.setContrast(255);
+  setLowContrast();
 
   String hostname("weather-");
   hostname += String(ESP.getChipId(), HEX);
@@ -150,6 +150,8 @@ void setup() {
   ui.setOverlays(overlays, numberOfOverlays);
   ui.init();
 
+  setLowContrast();
+
   Serial.println("");
 
   // Setup OTA
@@ -161,7 +163,6 @@ void setup() {
 }
 
 void loop() {
-
   if (millis() - timeSinceLastWUpdate > (1000L * UPDATE_INTERVAL_SECS)) {
     setReadyForWeatherUpdate();
     timeSinceLastWUpdate = millis();
@@ -323,4 +324,8 @@ void drawLoadingDots(unsigned int counter, String message) {
   display.drawXbm(60, 30, 8, 8, counter % 3 == 1 ? activeSymbole : inactiveSymbole);
   display.drawXbm(74, 30, 8, 8, counter % 3 == 2 ? activeSymbole : inactiveSymbole);
   display.display();
+}
+
+void setLowContrast() {
+  display.setContrast(50, 5, 0);
 }
